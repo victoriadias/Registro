@@ -1,6 +1,8 @@
 const supabaseUrl = 'https://verghknzyulewhjtxaln.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlcmdoa256eXVsZXdoanR4YWxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM3MzE4MDgsImV4cCI6MjA1OTMwNzgwOH0.zbLollRph68LJQ0DvLfqltQ0WgXGEtzmX1khwtyl-zM';
-const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+document.addEventListener("DOMContentLoaded", () => {
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+});
 
 const form = document.getElementById('form');
 const tableBody = document.querySelector('#dataTable tbody');
