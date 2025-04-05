@@ -1,7 +1,7 @@
 // Espera o DOM carregar antes de iniciar
 document.addEventListener("DOMContentLoaded", async () => {
     const supabaseUrl = "https://verghknzyulewhjtxaln.supabase.co";
-    const supabaseKey = "SUA_ANON_KEY_AQUI"; // Substitua pela sua chave real
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlcmdoa256eXVsZXdoanR4YWxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM3MzE4MDgsImV4cCI6MjA1OTMwNzgwOH0.zbLollRph68LJQ0DvLfqltQ0WgXGEtzmX1khwtyl-zM"; // Substitua pela sua chave real
     const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
     // Função para carregar os registros do banco e exibir na tabela
