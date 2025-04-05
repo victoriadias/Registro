@@ -1,61 +1,94 @@
-const supabaseUrl = 'https://verghknzyulewhjtxaln.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlcmdoa256eXVsZXdoanR4YWxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM3MzE4MDgsImV4cCI6MjA1OTMwNzgwOH0.zbLollRph68LJQ0DvLfqltQ0WgXGEtzmX1khwtyl-zM';
-document.addEventListener("DOMContentLoaded", () => {
+// Espera o DOM carregar antes de iniciar
+document.addEventListener("DOMContentLoaded", async () => {
+    const supabaseUrl = "https://verghknzyulewhjtxaln.supabase.co";
+    const supabaseKey = "SUA_ANON_KEY_AQUI"; // Substitua pela sua chave real
     const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-});
 
-const form = document.getElementById('form');
-const tableBody = document.querySelector('#dataTable tbody');
+    // Função para carregar os registros do banco e exibir na tabela
+    async function carregarRegistros() {
+        const { data, error } = await supabase.from("servicos").select("*");
+        if (error) {
+            console.error("Erro ao carregar registros:", error.message);
+            return;
+        }
 
-// Carrega os registros ao iniciar
-window.addEventListener('DOMContentLoaded', async () => {
-  const { data, error } = await supabase.from('registros').select('*');
-  if (error) {
-    console.error('Erro ao carregar dados:', error);
-  } else {
-    data.forEach(addRowToTable);
-  }
-});
+        const tabela = document.getElementById("tabela-registros");
+        tabela.innerHTML = ""; // Limpa a tabela antes de adicionar novos dados
 
-// Adiciona nova linha na tabela
-function addRowToTable(registro) {
-  const row = document.createElement('tr');
-  row.innerHTML = `
-    <td>${registro.nome}</td>
-    <td>${registro.equipamento}</td>
-    <td>${registro.defeito}</td>
-    <td>${registro.status}</td>
-    <td>${registro.data}</td>
-    <td>${registro.valor}</td>
-  `;
-  tableBody.appendChild(row);
-}
+        data.forEach(registro => {
+            const row = `<tr>
+                <td>${registro.id}</td>
+                <td>${registro.solicitante}</td>
+                <td>${registro.loja}</td>
+                <td>${registro.servico}</td>
+                <td>R$ ${registro.orcamento}</td>
+                <td>${registro.infraSpeak}</td>
+                <td>${registro.mes} de ${registro.ano}</td>
+                <td>${registro.faturamento}</td>
+                <td>${registro.situacao}</td>
+                <td>${registro.tipoServico}</td>
+                <td>
+                    <button onclick="editarRegistro(${registro.id})" class="btn btn-primary">Editar</button>
+                    <button onclick="removerRegistro(${registro.id})" class="btn btn-danger">Remover</button>
+                </td>
+            </tr>`;
+            tabela.innerHTML += row;
+        });
+    }
 
-// Salva novo registro
-form.addEventListener('submit', async (event) => {
-  event.preventDefault();
+    // Define a função global para adicionar um registro
+    window.adicionarRegistro = async function() {
+        console.log("Adicionando registro...");
 
-  const nome = document.getElementById('nome').value;
-  const equipamento = document.getElementById('equipamento').value;
-  const defeito = document.getElementById('defeito').value;
-  const status = document.getElementById('status').value;
-  const data = document.getElementById('data').value;
-  const valor = document.getElementById('valor').value;
+        // Pegando valores dos inputs
+        const solicitante = document.getElementById("solicitante").value;
+        const loja = document.getElementById("loja").value;
+        const servico = document.getElementById("servico").value;
+        const infraSpeak = document.getElementById("infraSpeak").value;
+        const faturamento = document.getElementById("faturamento").value;
+        const tipoServico = document.getElementById("tipoServico").value;
+        const orcamento = document.getElementById("orcamento").value;
+        const mes = document.getElementById("mes").value;
+        const ano = document.getElementById("ano").value;
+        const situacao = document.getElementById("situacao").value;
 
-  const { data: inserted, error } = await supabase.from('registros').insert([{
-    nome,
-    equipamento,
-    defeito,
-    status,
-    data,
-    valor
-  }]);
+        // Inserindo dados no Supabase
+        const { data, error } = await supabase
+            .from("servicos")
+            .insert([
+                {
+                    solicitante,
+                    loja,
+                    servico,
+                    infraSpeak,
+                    faturamento,
+                    tipoServico,
+                    orcamento,
+                    mes,
+                    ano,
+                    situacao
+                }
+            ]);
 
-  if (error) {
-    alert('Erro ao salvar os dados!');
-    console.error(error);
-  } else {
-    addRowToTable(inserted[0]);
-    form.reset();
-  }
+        if (error) {
+            console.error("Erro ao adicionar registro:", error.message);
+        } else {
+            console.log("Registro adicionado com sucesso:", data);
+            location.reload(); // Atualiza a página para exibir o novo registro
+        }
+    };
+
+    // Define a função global para remover um registro
+    window.removerRegistro = async function(id) {
+        const { error } = await supabase.from("servicos").delete().eq("id", id);
+        if (error) {
+            console.error("Erro ao remover registro:", error.message);
+        } else {
+            console.log("Registro removido com sucesso!");
+            location.reload();
+        }
+    };
+
+    // Chama a função para carregar os registros ao iniciar a página
+    carregarRegistros();
 });
